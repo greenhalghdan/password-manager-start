@@ -1,14 +1,21 @@
 from tkinter import *
+from tkinter import messagebox
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
     pass
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def add_entry():
-    with open("data.txt", "a") as passworddb:
-        passworddb.write(f"\n{website_input.get()} | {username_input.get()} | {password_input.get()}")
-        website_input.delete(0, "end")
-        password_input.delete(0, "end")
+    if len(username_input.get()) > 0 and len(website_input.get()) > 0 and len(password_input.get()) > 0:
+        is_ok = messagebox.askokcancel(title=website_input.get(), message=f"These are the deatils entered: \nemail: {username_input.get()} \nPassword: {password_input.get()} \n is it ok to save?")
+        if is_ok:
+            with open("data.txt", "a") as passworddb:
+                passworddb.write(f"{website_input.get()} | {username_input.get()} | {password_input.get()}\n")
+                website_input.delete(0, "end")
+                password_input.delete(0, "end")
+    else:
+        messagebox.showinfo(title="Validation Error", message="You have not filled in all values")
 # ---------------------------- UI SETUP ------------------------------- #
+
 
 window = Tk()
 window.title("Password Manager")
@@ -35,7 +42,7 @@ username_label = Label(text="Email/Username:")
 username_label.grid(column=1, row=3)
 
 username_input = Entry(width=35)
-username_input.insert(0, "greenhalghdan@gmail.com")
+username_input.insert(0, "email@domain.com")
 username_input.grid(column=2, row=3, columnspan=2)
 
 # password
