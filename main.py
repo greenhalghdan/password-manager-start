@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 def generate_password():
     # Password Generator Project
@@ -41,11 +42,27 @@ def generate_password():
     #password_input.grid(column=2, row=4, columnspan=1)
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 def add_entry():
+    new_data = {
+        website_input.get(): {
+            "email": username_input.get(),
+            "password": password_input.get()
+        }
+    }
+
     if len(username_input.get()) > 0 or len(website_input.get()) > 0 or len(password_input.get()) > 0:
         is_ok = messagebox.askokcancel(title=website_input.get(), message=f"These are the deatils entered: \nemail: {username_input.get()} \nPassword: {password_input.get()} \n is it ok to save?")
         if is_ok:
-            with open("data.txt", "a") as passworddb:
-                passworddb.write(f"{website_input.get()} | {username_input.get()} | {password_input.get()}\n")
+            try:
+                with open("data.json", "r") as passworddb:
+                    data = json.load(passworddb)
+            except FileNotFoundError:
+                with open("data.json", "w") as passworddb:
+                    json.dump(new_data, passworddb, indent=4)
+            else:
+                data.update(new_data)
+                with open("data.json", "w") as passworddb:
+                    json.dump(data, passworddb, indent=4)
+            finally:
                 website_input.delete(0, "end")
                 password_input.delete(0, "end")
     else:
