@@ -41,6 +41,29 @@ def generate_password():
     pyperclip.copy(password)
     #password_input.grid(column=2, row=4, columnspan=1)
 # ---------------------------- SAVE PASSWORD ------------------------------- #
+def search_db():
+    try:
+        search_term = website_input.get()
+        with open("data.json", "r") as DB:
+            data = json.load(DB)
+            print(data[search_term])
+            messagebox.askokcancel(title="search_term",
+                                   message=f"your login details for {search_term} are "
+                                           f"\n username: {data[search_term]['email']}"
+                                           f" \n Password: {data[search_term]['password']}")
+    except FileNotFoundError:
+        messagebox.askokcancel(title="Warning",
+                               message=f"There is currently no data file present")
+        print("no data file found")
+    except KeyError:
+        messagebox.askokcancel(title="Warning",
+                               message=f"{website_input.get()} is not present in your Password database")
+        print("entry not found")
+    else:
+        pass
+    finally:
+        pass
+
 def add_entry():
     new_data = {
         website_input.get(): {
@@ -103,8 +126,8 @@ username_input.grid(column=2, row=3, columnspan=2)
 password_label = Label(text="Password:")
 password_label.grid(column=1, row=4)
 
-password_input = Entry(width=21)
-password_input.grid(column=2, row=4, columnspan=1)
+password_input = Entry(width=35)
+password_input.grid(column=2, row=4, columnspan=2)
 
 # genorate password
 
@@ -114,5 +137,9 @@ genpassword_button.grid(column=3, row=4, columnspan=1)
 # add entry to DB
 add_entry = Button(text="Add", width=36, command=add_entry)
 add_entry.grid(column=2, row=5, columnspan=2)
+
+# search the DB
+search = Button(text="Search", command=search_db)
+search.grid(column=3, row=2, columnspan=1)
 
 window.mainloop()
